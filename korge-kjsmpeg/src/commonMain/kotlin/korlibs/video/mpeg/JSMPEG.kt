@@ -2,7 +2,8 @@ package korlibs.video.mpeg
 
 import korlibs.time.PerformanceCounter
 import korlibs.memory.*
-import korlibs.crypto.encoding.fromBase64
+import korlibs.encoding.fromBase64
+import korlibs.time.seconds
 
 // This sets up the JSMpeg "Namespace". The object is empty apart from the Now()
 // utility function and the automatic CreateVideoElements() after DOMReady.

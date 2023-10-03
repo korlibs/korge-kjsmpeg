@@ -2,9 +2,7 @@ import korlibs.korge.gradle.*
 import java.net.URL
 
 plugins {
-    //alias(libs.plugins.korge)
-    //id("com.soywiz.korge") version "999.0.0.999"
-    id("com.soywiz.korge") version "4.0.0"
+    alias(libs.plugins.korge)
 }
 
 korge {
@@ -21,8 +19,6 @@ korge {
 
     targetJvm()
     targetJs()
-    targetDesktop()
-    targetDesktopCross()
     targetIos()
     targetAndroid()
     serializationJson()
@@ -32,9 +28,10 @@ dependencies {
     add("commonMainApi", project(":deps"))
 }
 
-val sampleUrl = "https://jsmpeg.com/blade-runner-2049-360p.ts"
+val sampleUrl = "https://github.com/korlibs/korge-kjsmpeg/releases/download/0.0.1/blade-runner-2049-360p.ts"
 val sampleLocalPath = file("src/commonMain/resources/blade-runner-2049-360p.ts")
 if (!sampleLocalPath.exists()) {
+    sampleLocalPath.parentFile.mkdirs()
     println("Downloading $sampleUrl -> $sampleLocalPath")
     sampleLocalPath.writeBytes(URL(sampleUrl).readBytes())
 }

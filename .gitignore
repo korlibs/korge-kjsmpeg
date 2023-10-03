@@ -1,6 +1,16 @@
 .DS_Store
 .gradle
 /build/
+/.gradle
+/.idea
+/build
+/deps
+/modules
+/korge.keystore
+/local.properties
+/src/main
+/blade-runner-2049-360p.ts
+/src/commonMain/resources/blade-runner-2049-360p.ts
 
 # Ignore Gradle GUI config
 gradle-app.setting
