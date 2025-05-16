@@ -34,7 +34,7 @@ class MainMyModuleScene : Scene() {
         val data = localFile.openInputStream()
         //val data = resourcesVfs["blade-runner-2049-1080p.ts.mpeg"].openInputStream()
         val player = JSMpegPlayer(views.coroutineContext)
-        player.audioStream.start()
+        //player.audioStream.start()
 
         player.onDecodedVideoFrame.add {
             it.bitmap.lock {}

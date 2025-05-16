@@ -3,6 +3,7 @@
 /build/
 /.gradle
 /.idea
+/.kotlin
 /build
 /deps
 /modules

@@ -1,14 +1,11 @@
 package korlibs.video.mpeg
 
+import korlibs.audio.sound.*
 import korlibs.time.milliseconds
 import korlibs.memory.*
-import korlibs.audio.sound.AudioSamples
-import korlibs.audio.sound.AudioSamplesDeque
-import korlibs.audio.sound.nativeSoundProvider
 import korlibs.image.bitmap.Bitmap32
 import korlibs.image.color.RGBA
 import korlibs.io.async.Signal
-import korlibs.io.async.delay
 import korlibs.io.stream.AsyncInputStream
 import korlibs.io.stream.openAsync
 import korlibs.io.stream.readBytesUpTo
@@ -17,6 +14,7 @@ import korlibs.video.mpeg.stream.AudioDestination
 import korlibs.video.mpeg.stream.VideoDestination
 import korlibs.video.mpeg.stream.audio.MP2
 import korlibs.video.mpeg.stream.video.MPEG1
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class JSMpegPlayer(val coroutineContext: CoroutineContext) {
@@ -129,7 +127,9 @@ class JSMpegPlayer(val coroutineContext: CoroutineContext) {
             override fun play(rate: Int, left: FloatArray, right: FloatArray) {
                 //println("audio.play:rate=$rate")
                 val audioSamples = AudioSamples(2, left.size)
-                for (n in left.indices) audioSamples.setFloatStereo(n, left[n], right[n])
+                for (n in left.indices) {
+                    audioSamples.setStereo(n, AudioSample(left[n]), AudioSample(right[n]))
+                }
                 audioSamplesDeque.write(audioSamples)
             }
 
@@ -145,10 +145,13 @@ class JSMpegPlayer(val coroutineContext: CoroutineContext) {
         demuxer.write(data)
     }
 
-    val audioStream = nativeSoundProvider.createPlatformAudioOutput(coroutineContext)
     //val audioStream = nativeSoundProvider.createAudioStream(Dispatchers.Unconfined)
     val audioSamplesDeque = AudioSamplesDeque(2)
     val audioSamples = AudioSamples(2, 4096)
+
+    @OptIn(ExperimentalStdlibApi::class) val audioStream = nativeSoundProvider.createNewPlatformAudioOutput(2, 44100) {
+        audioSamplesDeque.read(it)
+    }
 
     private var data: AsyncInputStream = byteArrayOf().openAsync()
 
@@ -169,7 +172,6 @@ class JSMpegPlayer(val coroutineContext: CoroutineContext) {
         //for (n in 0 until 7) println(video.decode())
         while (audioSamplesDeque.availableRead > 0) {
             val count = audioSamplesDeque.read(audioSamples)
-            audioStream.add(audioSamples, 0, count)
         }
 
         while (true) {
@@ -183,7 +185,7 @@ class JSMpegPlayer(val coroutineContext: CoroutineContext) {
                 continue
             }
 
-            //delay(16.milliseconds)
+            delay(16.milliseconds)
 
             return result
         }
